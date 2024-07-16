@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto p-4">
+        <h1 class="text-4xl font-bold mb-4">Dashboard</h1>
+
+        <!-- Welcome Message -->
+        <p class="text-xl mb-4">Welcome, <%= user.email %>
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- My Rewards Section -->
+            <div>
+                <h2 class="text-2xl font-bold mb-2">My Rewards</h2>
+                <div class="bg-gray-800 p-4 rounded-md">
+                    <% if (myRewards.length> 0) { %>
+                        <ul>
+                            <% myRewards.forEach(userReward=> { %>
+                                <li class="mb-2 p-2 border-b border-gray-700">
+                                    <h3 class="text-xl font-semibold">
+                                        <%= userReward.rewardId.name %>
+                                    </h3>
+                                    <p>
+                                        <%= userReward.rewardId.points %>
+                                    </p>
+                                    <p class="text-green-300">Claimed: <%= new
+                                            Date(userReward.createdAt).toLocaleString() %>
+                                    </p>
+                                </li>
+                                <% }); %>
+                        </ul>
+                        <% } else { %>
+                            <p>No rewards claimed yet.</p>
+                            <% } %>
+                </div>
+            </div>
+
+            <!-- Available Rewards Section -->
+            <div>
+                <h2 class="text-2xl font-bold mb-2">Available Rewards</h2>
+                <div class="bg-gray-800 p-4 rounded-md">
+                    <% if (rewards.length> 0) { %>
+                        <ul>
+                            <% rewards.forEach(reward=> { %>
+                                <li class="mb-2 p-2 border-b border-gray-700">
+                                    <h3 class="text-xl font-semibold">
+                                        <%= reward.name %>
+                                    </h3>
+                                    <p>
+                                        <%= reward.description %>
+                                    </p>
+                                    <form action="/claim-reward" method="POST">
+                                        <input type="hidden" name="rewardId" value="<%= reward._id %>">
+                                        <input type="hidden" name="userId" value="<%= user._id %>">
+                                        <button type="submit"
+                                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                            Claim Reward
+                                        </button>
+                                    </form>
+                                </li>
+                                <% }); %>
+                        </ul>
+                        <% } else { %>
+                            <p>No rewards available.</p>
+                            <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
