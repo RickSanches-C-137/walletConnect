@@ -8,7 +8,7 @@
       "ESNext",
     ],
     "resolveJsonModule": true,
-    "outDir": "dist",
+    "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": false,
@@ -18,7 +18,8 @@
     // "noUnusedLocals": true
   },
   "include": [
-    "./src"
+    "src/**/*.ts",
+    "fields/**/*.ejs"
   ],
   "exclude": [
     "node_modules",
