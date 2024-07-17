@@ -56,7 +56,7 @@ const requireLogin = (req, res, next) => {
 };
 
 app.get('/', (_: Request, res: Response) => {
-  res.render('index');
+  res.render('index.ejs');
 });
 
 
