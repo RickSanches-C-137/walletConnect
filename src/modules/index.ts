@@ -11,6 +11,7 @@ const jwt = jwtGuard({ credentialsRequired: true }).unless({
     '/',
     '/v1/signup',
     '/v1/signin',
+    '/v1/create-reward'
   ]
 });
 

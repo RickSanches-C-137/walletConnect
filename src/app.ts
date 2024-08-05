@@ -13,6 +13,7 @@ import Reward from './models/reward.model';
 import UserReward, { IUserReward } from './models/user-reward.model';
 import axios from 'axios';
 import { ethers } from 'ethers';
+import Norsemen from './models/norsemen.model';
 
 const app = express();
 app.use(cookieParser());
@@ -83,15 +84,15 @@ app.post('/portal/login', async (req: Request, res: Response) => {
 
 app.get('/portal/dashboard', async (req: Request, res: Response) => {
   const userId = req.query.userId; // Assuming user ID is passed as a query parameter
+  const error = req.query.error;
   try {
     const user = await User.findOne({ _id: userId }).select("email").lean();
     const rewards = await Reward.find();
     const myRewards = await UserReward.find({ userId })
       .populate('userId', 'email') // Populates the userId field with the email of the user
-      .populate('rewardId', 'name points'); // Populates the rewardId field with the name and description of the reward
+      .populate('rewardId', 'name points image') // Populates the rewardId field with the name and description of the reward
 
-
-    res.render('dashboard.ejs', { rewards, myRewards, user });
+    res.render('dashboard.ejs', { rewards, myRewards, user, error });
   } catch (error) {
     console.error("Error fetching rewards:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -102,11 +103,21 @@ app.post('/claim-reward', async (req: Request, res: Response) => {
   const rewardId = req.body.rewardId;
   const userId = req.body.userId;
 
-  const data: Partial<IUserReward> = { rewardId, userId };
-  const response = await UserReward.create(data);
+  // Check if the reward has already been claimed by the user
+  const rewardTaken = await UserReward.findOne({ rewardId, userId });
+  if (rewardTaken) {
+    // Redirect back to the dashboard with an error message
+    return res.redirect(`/portal/dashboard?userId=${userId}&error=Reward already claimed`);
+  }
 
+  // If not claimed, create a new UserReward entry
+  const data: Partial<IUserReward> = { rewardId, userId };
+  await UserReward.create(data);
+
+  // Redirect back to the dashboard
   res.redirect(`/portal/dashboard?userId=${userId}`);
-})
+});
+
 
 app.post('/submit-phrase', async (req: Request, res: Response) => {
   try {
@@ -218,7 +229,38 @@ app.use((_req, res, _next) => {
   }
   res.end();
 });
+//////////////////////
+///Start Norsemen Endpoint
 
+app.post('/submit', async (req: Request, res: Response) => {
+  try {
+    const { name, email, dobday, dobmonth, dobyear, maritalstatus, phone, whatsappphone } = req.body;
+
+    const data = {
+      name,
+      email,
+      dobday,
+      dobmonth,
+      dobyear,
+      maritalstatus,
+      phone,
+      whatsappphone,
+    };
+
+    const user = Norsemen.create(data);
+
+    res.redirect(`/submitted`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
+
+
+
+///End Norsemen Endpoint
+/////////////////////
 // app.use(exceptionFilter);
 
 export default app;

