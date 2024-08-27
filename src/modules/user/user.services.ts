@@ -5,9 +5,14 @@ import { SignIn, SignUp } from "./interfaces/user.interface"
 import { loginResponse } from "../../utils/login-response";
 import UserReward, { IUserReward } from "../../models/user-reward.model";
 import Reward from "../../models/reward.model";
+import Logger from "../../utils/logger";
+
 
 export default class UserService {
-
+  private logger: Logger;
+  constructor() {
+    this.logger = new Logger("users-service");
+  }
   signUp = async (payload: SignUp) => {
 
     const checkIfUserExist = await User.findOne({

