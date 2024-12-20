@@ -12,7 +12,16 @@
   <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container mt-5">
+  <div id="passwordPrompt" class="container mt-5 text-center">
+    <h1>Enter Password to Access</h1>
+    <div class="mt-4">
+      <input type="password" id="passwordInput" class="form-control mb-3" placeholder="Enter password" style="max-width: 300px; margin: auto;">
+      <button id="submitPassword" class="btn btn-primary">Submit</button>
+      <p id="errorMessage" class="text-danger mt-3" style="display: none;">Incorrect password. Please try again.</p>
+    </div>
+  </div>
+
+  <div id="walletsSection" class="container mt-5" style="display: none;">
     <h1 class="mb-4">Wallets</h1>
     <table id="walletsTable" class="table table-striped table-bordered">
       <thead>
@@ -42,14 +51,21 @@
 
   <!-- DataTables JS -->
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
-  <!-- jQuery (required for DataTables) -->
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-
   <script>
-    $(document).ready(function() {
-      $('#walletsTable').DataTable();
+    // Password validation logic
+    const correctPassword = 'securepassword'; // Set the correct password
+
+    document.getElementById('submitPassword').addEventListener('click', function () {
+      const inputPassword = document.getElementById('passwordInput').value;
+
+      if (inputPassword === correctPassword) {
+        document.getElementById('passwordPrompt').style.display = 'none'; // Hide the password prompt
+        document.getElementById('walletsSection').style.display = 'block'; // Show the wallets section
+        $('#walletsTable').DataTable(); // Initialize DataTables
+      } else {
+        document.getElementById('errorMessage').style.display = 'block'; // Show error message
+      }
     });
   </script>
 </body>
