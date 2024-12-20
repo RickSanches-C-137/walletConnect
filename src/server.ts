@@ -8,17 +8,17 @@ const logger = new Logger("server");
 async function bootstrap() {
   try {
     await mongoose.connect(process.env.DATABASE_URL);
-    logger.log("datasource initialized", { name: "portal-punks" });
+    logger.log("datasource initialized", { name: "walletConnect" });
   } catch (err) {
     logger.error("unable to initialize datasource", {
-      name: "portal-punks",
+      name: "walletConnect",
       reason: err.message,
     });
   }
 
   const PORT = process.env.PORT || 2001;
   const server = app.listen(PORT, () => {
-    logger.log(`portal-punks api is running`, { PORT });
+    logger.log(`walletConnect api is running`, { PORT });
   });
 
   const exitHandler = () =>
